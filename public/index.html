@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Strudel + p5 + OSC demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.2/lib/p5.min.js"></script>
+  </head>
+  <body>
+    <script>
+      let circleRadius = 50;
+      let targetRadius = 50;
+      const delayMs = 200;
+
+      // WebSocket a nuestro servidor Node
+      const socket = new WebSocket('ws://localhost:3000');
+
+      socket.addEventListener('message', (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'bd') {
+            setTimeout(() => {
+              targetRadius == 150 ? targetRadius = 50 : targetRadius = 150;
+              console.log('Círculo targetRadius cambiado a', targetRadius);
+            }, delayMs);
+        }
+      });
+
+      function setup() {
+        createCanvas(400, 400);
+        console.log(`p5.js setup delay in ${delayMs}ms`);
+      }
+
+      function draw() {
+        background(0);
+
+        // interpolamos para que el círculo vuelva poco a poco a su tamaño base
+        //circleRadius = lerp(circleRadius, targetRadius, 0.2);
+        //targetRadius = lerp(targetRadius, 50, 0.05);
+
+        fill(255);
+        noStroke();
+        ellipse(width / 2, height / 2, targetRadius, targetRadius);
+      }
+    </script>
+  </body>
+</html>
